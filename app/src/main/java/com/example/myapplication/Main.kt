@@ -2,23 +2,54 @@ package com.example.myapplication
 
 fun main() {
     val ui = Visual()
-    val miTablero = Tablero(filas = 8, columnas = 8, numeroMinas = 10)
 
-    while(true){
-        ui.mostrarTablero(miTablero)
+    val opcion = ui.menu()
 
-        var (fila,columna) = ui.ingresarJugada()
+    when(opcion){
+        1 ->{
 
-        var casilla = miTablero.getCasilla(fila,columna)
+            val (filas,columnas,minas) = ui.configurarPartida()
 
-        if(!casilla!!.isAbierta() && casilla.isDisponible()){ //Abrir una casilla disponible
-            miTablero.descubrirCasilla(fila, columna)
+            val miTablero = Tablero(filas,columnas,minas)
+
+
+            while(true){
+                ui.clearScreen()
+                ui.mostrarTablero(miTablero)
+                val accion = ui.seleccionarAccion()
+
+                if(accion == 4){
+                    break
+                }
+                val (fila,columna) = ui.ingresarJugada(miTablero.getFilas(),miTablero.getColumnas())
+
+                val casilla = miTablero.getCasilla(fila, columna)!!
+
+                when(accion){
+                    1->{
+                        if(!casilla.isAbierta() && casilla.isDisponible()){
+                            miTablero.abrirCasilla(fila, columna)
+                        }
+                    }
+                    2->{
+                        if(!casilla.isMarcada() && casilla.isDisponible()){
+                            miTablero.marcarCasilla(fila,columna)
+                        }
+                    }
+                    3->{
+                        if(casilla.isMarcada()){
+                            miTablero.desmarcarCasilla(fila,columna)
+                        }
+                    }
+                    else->{
+                        println("Error: Acción desconocida")
+                    }
+                }
+            }
         }
-        //Abrir una casilla no disponible
-        //Marcar una casilla disponible
-        //Marcar una casilla no disponible
-
     }
+    ui.clearScreen()
+    print("Juego terminado")
 }
 
 

@@ -73,16 +73,12 @@ class Casilla(coordenadaX: Int, coordenadaY: Int) { // Constructor primario
 
     fun setMarcada(estaMarcada: Boolean) {
         this.marcada = estaMarcada
-if (estaMarcada) {
-             this.abierta = false
-        }
     }
 
     fun setDisponible(estaDisponible: Boolean) {
         this.disponible = estaDisponible
     }
 
-    // Opcional: un método para mostrar el estado, útil para depuración
     override fun toString(): String {
         return "Casilla(x=$x, y=$y, minas_alrededor=$minas_alrededor, mina=$mina, abierta=$abierta, marcada=$marcada, disponible=$disponible)"
     }
@@ -94,15 +90,17 @@ if (estaMarcada) {
     }
 
     fun abrir() {
-        if (!marcada && disponible && !abierta) {
-            this.abierta = true
-            //Si es mina, el juego temrina
+        this.abierta = true
+        this.disponible = false
         }
-    }
 
     fun marcar() {
-        if (!abierta && disponible) {
-            this.marcada = !this.marcada
-        }
+        this.marcada = true
+        this.disponible = false
+    }
+
+    fun desmarcar(){
+        this.marcada = false
+        this.disponible = true
     }
 }
