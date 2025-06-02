@@ -12,7 +12,7 @@ fun main() {
 
             val miTablero = Tablero(filas,columnas,minas)
 
-
+11
             while(true){
                 ui.clearScreen()
                 ui.mostrarTablero(miTablero)
