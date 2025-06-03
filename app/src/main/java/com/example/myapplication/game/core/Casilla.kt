@@ -1,4 +1,4 @@
-package com.example.myapplication
+package com.example.myapplication.game.core
 
 class Casilla(coordenadaX: Int, coordenadaY: Int) { // Constructor primario
 

@@ -1,5 +1,8 @@
 package com.example.myapplication
 
+import com.example.myapplication.game.core.Casilla
+import com.example.myapplication.game.core.Tablero
+
 data class ConfiguracionTablero(
     val filas: Int,
     val columnas: Int,

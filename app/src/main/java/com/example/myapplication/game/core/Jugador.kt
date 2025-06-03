@@ -1,4 +1,4 @@
-package com.example.myapplication
+package com.example.myapplication.game.core
 
 class Jugador(nombreInicial: String) {
 
