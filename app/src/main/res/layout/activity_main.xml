@@ -37,4 +37,56 @@ app:layout_constraintEnd_toEndOf="parent" />
         app:columnCount="8">
 
     </androidx.gridlayout.widget.GridLayout>
+
+    <EditText
+        android:id="@+id/rowEditText"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="8dp"
+        android:hint="Fila"
+        android:inputType="number"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toStartOf="@+id/columnEditText"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/matrixGridLayout" />
+
+    <!-- EditText para la Columna -->
+    <EditText
+        android:id="@+id/columnEditText"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="32dp"
+        android:hint="Columna"
+        android:inputType="number"
+        android:textAlignment="center"
+        app:layout_constraintBottom_toBottomOf="@id/rowEditText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/rowEditText"
+        app:layout_constraintTop_toTopOf="@id/rowEditText" />
+
+    <!-- Selector para la acción (Abrir, Marcar, Desmarcar) -->
+    <Spinner
+        android:id="@+id/actionSpinner"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="16dp"
+        android:textAlignment="center"
+        app:layout_constraintTop_toBottomOf="@id/rowEditText"
+        app:layout_constraintStart_toStartOf="@id/rowEditText"
+        app:layout_constraintEnd_toEndOf="@id/columnEditText" />
+
+    <!-- Botón para enviar la jugada -->
+    <Button
+        android:id="@+id/sendMoveButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Enviar Jugada"
+        android:layout_marginTop="24dp"
+        app:layout_constraintTop_toBottomOf="@id/actionSpinner"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
