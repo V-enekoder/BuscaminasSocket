@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity() {
 
     private val NUM_ROWS = 8
     private val NUM_COLS = 8
-    private val NUM_MINES = 10
+    private val NUM_MINES = 20
     private val CELL_SIZE_DP = 40 // Tamaño de cada celda en DP
 
     private lateinit var matrixGridLayout: GridLayout
@@ -36,6 +36,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var cellViews: Array<Array<TextView>>
 
     private var juegoActivo = true // Para saber si el juego ha terminado
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge() // Para el diseño Edge-to-Edge
@@ -51,7 +52,6 @@ class MainActivity : AppCompatActivity() {
 
         inicializarVistas()
         iniciarNuevoJuego()
-        //setupGameGrid()
         setupSpinner()
         setupButtonListener()
     }
@@ -131,15 +131,18 @@ class MainActivity : AppCompatActivity() {
             }
 
             // --- Le dice al MODELO qué hacer ---
-            when (actionSpinner.selectedItemPosition) {
+            val resultadoJugada: Int = when (actionSpinner.selectedItemPosition) {
                 0 -> tableroLogico.abrirCasilla(row, col)
                 1 -> tableroLogico.marcarCasilla(row, col)
                 2 -> tableroLogico.desmarcarCasilla(row, col)
+                else -> 0
             }
-
             // --- Pide a la VISTA que se actualice ---
             actualizarVistaTablero()
-
+            if(resultadoJugada == -1){
+                juegoActivo = false
+                revelarTableroCompleto()
+            }
             // --- Comprueba el resultado del juego desde el MODELO ---
             verificarEstadoDelJuego()
         }
@@ -162,6 +165,7 @@ class MainActivity : AppCompatActivity() {
                     // La casilla está abierta, mostrar su contenido
                     cellView.setBackgroundColor(Color.LTGRAY)
                     if (casillaLogica.isMina()) {
+                        //cellView.text = "M"
                         cellView.text = "💣" // Emoji de bomba
                         cellView.setBackgroundColor(Color.RED)
                     } else if (casillaLogica.getMinasAlrededor() > 0) {

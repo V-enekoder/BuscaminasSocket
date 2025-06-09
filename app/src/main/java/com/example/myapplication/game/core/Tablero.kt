@@ -67,16 +67,22 @@ class Tablero(
         return fila >= 0 && fila < filas && columna >= 0 && columna < columnas
     }
 
-    fun abrirCasilla(fila: Int, columna: Int): Boolean {
+    /*
+    * -1 = Perdiate
+    *  0 = No válido
+    * 1 = Sigue la partida
+    * */
+
+    fun abrirCasilla(fila: Int, columna: Int): Int {
         if (!estaDentroDeLimites(fila, columna)) {
-            return false
+            return 0
         }
         val casilla = tablero[fila][columna]
         
         if (casilla.isMina()) {
             juegoTerminado = true
             victoria = false
-            return false
+            return -1
         }
         
         jugadas++
@@ -85,7 +91,7 @@ class Tablero(
             abrirAlrededorRecursivo(casilla)
         }
 
-        return true
+        return 1
     }
 
     private fun abrirAlrededorRecursivo(casillaOriginal: Casilla) {
@@ -119,18 +125,20 @@ class Tablero(
         return alrededor
     }
 
-    fun marcarCasilla(fila: Int, columna: Int) {
+    fun marcarCasilla(fila: Int, columna: Int): Int {
         val casilla = tablero[fila][columna]
         if (!casilla.isAbierta()) {
             casilla.marcar()
         }
+        return 1
     }
 
-    fun desmarcarCasilla(fila: Int, columna: Int) {
+    fun desmarcarCasilla(fila: Int, columna: Int): Int {
         val casilla = tablero[fila][columna]
         if (!casilla.isMarcada()) {
             casilla.desmarcar()
         }
+        return 1
     }
 
 
