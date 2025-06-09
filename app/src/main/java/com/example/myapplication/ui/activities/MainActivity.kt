@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity() {
 
     private val NUM_ROWS = 8
     private val NUM_COLS = 8
-    private val NUM_MINES = 20
+    private val NUM_MINES = 2
     private val CELL_SIZE_DP = 40 // Tamaño de cada celda en DP
 
     private lateinit var matrixGridLayout: GridLayout
@@ -138,6 +138,7 @@ class MainActivity : AppCompatActivity() {
                 else -> 0
             }
             // --- Pide a la VISTA que se actualice ---
+
             actualizarVistaTablero()
             if(resultadoJugada == -1){
                 juegoActivo = false
@@ -174,6 +175,24 @@ class MainActivity : AppCompatActivity() {
                         // Casilla vacía y abierta, no mostrar nada
                         cellView.text = ""
                     }
+                }
+            }
+        }
+    }
+
+    private fun mostarMinas() {
+        for (r in 0 until NUM_ROWS) {
+            for (c in 0 until NUM_COLS) {
+                val casillaLogica = tableroLogico.getCasilla(r, c)!!
+                val cellView = cellViews[r][c]
+
+                cellView.text = "" // Limpiar texto anterior
+                cellView.setBackgroundColor(Color.DKGRAY) // Color por defecto de casilla oculta
+
+                if (casillaLogica.isMina()) {
+                    //cellView.text = "M"
+                    cellView.text = "💣" // Emoji de bomba
+                    cellView.setBackgroundColor(Color.RED)
                 }
             }
         }
