@@ -5,12 +5,14 @@ import kotlin.random.Random
 class Tablero(
     private val filas: Int,
     private val columnas: Int,
-    private val numeroMinas: Int
+    private val numeroMinas: Int,
+    private val nombre: String
 ) {
     private var jugadas: Int = 0
     private var juegoTerminado: Boolean = false
     private var victoria: Boolean = false
     private val tablero: Array<Array<Casilla>>
+    private var jugador: Jugador = Jugador(nombre)
 
     init {
         if (numeroMinas > filas * columnas) {
@@ -87,6 +89,7 @@ class Tablero(
         
         jugadas++
         casilla.abrir()
+        jugador.aumentarPuntuacion()
         if (casilla.getMinasAlrededor() == 0) {
             abrirAlrededorRecursivo(casilla)
         }
@@ -100,6 +103,7 @@ class Tablero(
             for (adyacente in casillasAdyacentes) {
                 if (!adyacente.isAbierta() && !adyacente.isMarcada()) {
                     adyacente.abrir()
+                    jugador.aumentarPuntuacion()
                     if (adyacente.getMinasAlrededor()== 0) {
                         abrirAlrededorRecursivo(adyacente)
                     }
@@ -130,6 +134,11 @@ class Tablero(
         if (!casilla.isAbierta()) {
             casilla.marcar()
         }
+
+        if(casilla.isMina()){
+            jugador.aumentarPuntuacion()
+        }
+
         return 1
     }
 
@@ -138,6 +147,11 @@ class Tablero(
         if (!casilla.isMarcada()) {
             casilla.desmarcar()
         }
+
+        if(casilla.isMina()){
+            jugador.reducirPuntuacion()
+        }
+
         return 1
     }
 
@@ -166,6 +180,10 @@ class Tablero(
 
     fun getTablero(): Array<Array<Casilla>>{
         return tablero
+    }
+
+    fun getJugador(): Jugador{
+        return this.jugador
     }
 
     fun setJugadas(nuevasJugadas: Int) {

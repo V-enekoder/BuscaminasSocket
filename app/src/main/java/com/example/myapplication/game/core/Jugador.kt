@@ -19,6 +19,10 @@ class Jugador(nombreInicial: String) {
         this.puntuacion++
     }
 
+    fun reducirPuntuacion(){
+        this.puntuacion--
+    }
+
     fun setPuntuacion(nuevaPuntuacion: Int) {
         if (nuevaPuntuacion >= 0) {
             this.puntuacion = nuevaPuntuacion

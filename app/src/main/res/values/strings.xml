@@ -5,4 +5,5 @@
         <item>Marcar con Bandera</item>
         <item>Quitar Bandera</item>
     </string-array>
+    <string name="title_activity_game">GameActivity</string>
 </resources>
