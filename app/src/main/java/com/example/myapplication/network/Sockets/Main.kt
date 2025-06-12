@@ -4,6 +4,7 @@ import java.net.Socket
 import kotlin.concurrent.thread
 
 fun main() {
+    /*
     val ui = Visual()
 <<<<<<< HEAD
     val miTablero = Tablero(filas = 8, columnas = 8, numeroMinas = 10)
@@ -74,6 +75,8 @@ fun main() {
     }
     ui.clearScreen()
     print("Juego terminado")
+    ]
+     */
 }
 
 

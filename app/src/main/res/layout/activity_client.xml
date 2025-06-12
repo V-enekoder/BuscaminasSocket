@@ -7,6 +7,12 @@
     android:padding="16dp"
     tools:context=".ui.activities.ClientActivity">
 
+    <!-- Campo de entrada para la Dirección IP -->
+
+    <!-- Campo de entrada para el Puerto -->
+
+    <!-- Botón para conectar -->
+
     <TextView
         android:id="@+id/tvClientTitle"
         android:layout_width="wrap_content"
@@ -14,54 +20,41 @@
         android:text="Modo Cliente"
         android:textSize="28sp"
         android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/etIpAddress"
+        app:layout_constraintVertical_bias="0.036"
         app:layout_constraintVertical_chainStyle="packed" />
 
-    <!-- Campo de entrada para la Dirección IP -->
     <EditText
         android:id="@+id/etIpAddress"
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_marginTop="32dp"
+        android:digits="0123456789."
         android:hint="Dirección IP del Servidor"
         android:inputType="phone"
-        android:digits="0123456789."
         android:maxLines="1"
         android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvClientTitle"
-        app:layout_constraintBottom_toTopOf="@id/etPort" />
+        app:layout_constraintVertical_bias="0.374" />
 
-    <!-- Campo de entrada para el Puerto -->
-    <EditText
-        android:id="@+id/etPort"
-        android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="16dp"
-        android:hint="Puerto (ej: 8080)"
-        android:inputType="number"
-        android:maxLines="1"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/etIpAddress"
-        app:layout_constraintBottom_toTopOf="@id/btnConnect" />
-
-    <!-- Botón para conectar -->
     <Button
         android:id="@+id/btnConnect"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
         android:text="Conectar"
         android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/etPort"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.583" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -14,10 +14,10 @@ class Cliente (dir: String): Runnable{
 
     override fun run() {
         try{
+            println("Comprobando que el cliente inicio...")
             socket = Socket(direccionIP, 5200)
             dis = BufferedReader(InputStreamReader(socket!!.getInputStream()))
             dos = PrintWriter(socket!!.getOutputStream(), true)
-
             while(true){
                 enviarMensaje()
                 recibirMensaje()
@@ -40,7 +40,7 @@ class Cliente (dir: String): Runnable{
             var mensajeRecibido: String
             while(socket?.isConnected == true){
                 mensajeRecibido = dis?.readLine().toString()
-                println("$mensajeRecibido")
+                println("El mensaje recibido fue: $mensajeRecibido")
             }
         } catch (e: Exception){
             e.printStackTrace()
