@@ -11,16 +11,17 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.R
 import com.example.myapplication.Server
+import com.example.myapplication.network.sockets.ClientHandler
 import com.example.myapplication.network.sockets.Cliente
 import com.example.myapplication.network.sockets.Direccion
 import java.util.Locale
 import kotlin.concurrent.thread
 
-class ServerActivity : AppCompatActivity() {
+class ServerActivity : AppCompatActivity(), ClientHandler.ClienteConectadoListener {
   private val DELAY_MILLISECONDS: Long = 5000 // 5 segundos
   // private lateinit var gameConnection: GameConnection
   private var direccion = Direccion()
-  private var server = Server()
+  private var server = Server(this)
   private lateinit var client: Cliente
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,6 +48,18 @@ class ServerActivity : AppCompatActivity() {
 
     // navigateToNextScreenAfterDelay()
   }
+
+    override fun onClientCountChanged(conexiones: Int) {
+        if (conexiones == 1) {
+            navigateToGameConfiguration()
+        }
+    }
+
+    private fun navigateToGameConfiguration(){
+        val intent = Intent(this, GameConfigurationActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
 
   /**
    * Obtiene la dirección IP del dispositivo conectado a una red WiFi. Retorna la IP como un String

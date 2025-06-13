@@ -39,4 +39,8 @@ class ClientHandler(sock: Socket) : Runnable {
       } catch (e: Exception) {}
     }
   }
+
+  interface ClienteConectadoListener {
+    fun onClientCountChanged(conexiones: Int)
+  }
 }
