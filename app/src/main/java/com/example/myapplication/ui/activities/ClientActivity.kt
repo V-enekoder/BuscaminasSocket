@@ -5,18 +5,15 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.myapplication.Cliente
 import com.example.myapplication.R
-import com.example.myapplication.network.ConnectionListener
-import com.example.myapplication.network.GameClient
-import com.example.myapplication.network.GameConnection
+import com.example.myapplication.network.sockets.Cliente
 import kotlin.concurrent.thread
 
 class ClientActivity : AppCompatActivity() {
   // private lateinit var gameConnection: GameConnection
   // Declaramos las vistas para poder acceder a ellas
   private lateinit var etIpAddress: EditText
-  //private lateinit var etPort: EditText
+  // private lateinit var etPort: EditText
   private lateinit var btnConnect: Button
   private lateinit var client: Cliente
   private var direccionIP: String = ""
@@ -27,15 +24,15 @@ class ClientActivity : AppCompatActivity() {
 
     // 1. Inicializamos las vistas usando findViewById
     etIpAddress = findViewById(R.id.etIpAddress)
-    //etPort = findViewById(R.id.etPort)
+    // etPort = findViewById(R.id.etPort)
     btnConnect = findViewById(R.id.btnConnect)
 
     // 2. Configuramos el listener para el botón de conectar
     btnConnect.setOnClickListener { handleConnectButtonClick() }
 
-    //gameConnection = GameClient(ip, port)
-    //gameConnection.setConnectionListener(this)
-    //gameConnection.start()
+    // gameConnection = GameClient(ip, port)
+    // gameConnection.setConnectionListener(this)
+    // gameConnection.start()
   }
 
   private fun handleConnectButtonClick() {
