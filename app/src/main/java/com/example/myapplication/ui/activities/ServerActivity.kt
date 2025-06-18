@@ -39,6 +39,8 @@ class ServerActivity : AppCompatActivity(), ClientHandler.ClienteConectadoListen
       tvIpAddress.text = "No se pudo obtener la IP. ¿Estás conectado a una red WiFi?"
     }
     client = Cliente(ipAddress)
+      MainActivity.Sockets.serverU = server
+      MainActivity.Sockets.clienteU = client
     thread { server.run() }
     thread { client.run() }
     Toast.makeText(this, "Ah caray sos server", Toast.LENGTH_SHORT).show()
@@ -50,7 +52,7 @@ class ServerActivity : AppCompatActivity(), ClientHandler.ClienteConectadoListen
   }
 
     override fun onClientCountChanged(conexiones: Int) {
-        if (conexiones == 1) {
+        if (conexiones == 2) {
             navigateToGameConfiguration()
         }
     }

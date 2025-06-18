@@ -17,11 +17,12 @@ class Server(private val listener: ClientHandler.ClienteConectadoListener) : Run
       while (true) {
         val socket: Socket = serverSocket!!.accept()
         println("Cliente conectado: ${socket.inetAddress.hostAddress}")
-        val cliente: ClientHandler = ClientHandler(socket)
+        val cliente = ClientHandler(socket)
+        ClientHandler.clientes.add(cliente)
 
         listener.onClientCountChanged(ClientHandler.clientes.size)
 
-        thread { ClientHandler(socket).run() }
+        thread { cliente.run() }
           println("Cantidad de clientes conectados: ${ClientHandler.clientes.size}")
       }
     } catch (e: Exception) {
@@ -34,6 +35,16 @@ class Server(private val listener: ClientHandler.ClienteConectadoListener) : Run
       serverSocket?.close()
     } catch (e: Exception) {
       e.printStackTrace()
+    }
+  }
+
+  fun descifrarMensaje(msj: String){
+    var type: String = msj.split(" ")[0]
+
+    when(type){
+      "GAME_START" -> {
+
+      }
     }
   }
 

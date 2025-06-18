@@ -63,6 +63,8 @@ class ClientActivity : AppCompatActivity() {
     Toast.makeText(this, message, Toast.LENGTH_LONG).show()
     println("Antes del run")
     client = Cliente(direccionIP)
+    MainActivity.Sockets.clienteU = client
+    client.setContext(this)
     thread { client.run() }
     println("Despues del run")
   }

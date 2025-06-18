@@ -6,10 +6,17 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.R
+import com.example.myapplication.Server
+import com.example.myapplication.network.sockets.Cliente
 
 // Se elige si se quiere ser cliente o servidor
 
 class MainActivity : AppCompatActivity() {
+
+  object Sockets {
+    var serverU: Server? = null
+    var clienteU: Cliente? = null
+  }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
