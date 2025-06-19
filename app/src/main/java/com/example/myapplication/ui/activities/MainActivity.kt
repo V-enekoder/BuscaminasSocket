@@ -9,8 +9,6 @@ import com.example.myapplication.R
 import com.example.myapplication.Server
 import com.example.myapplication.network.sockets.Cliente
 
-// Se elige si se quiere ser cliente o servidor
-
 class MainActivity : AppCompatActivity() {
 
   object Sockets {

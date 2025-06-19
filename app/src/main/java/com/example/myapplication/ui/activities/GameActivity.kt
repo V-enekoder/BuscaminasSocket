@@ -21,10 +21,6 @@ import com.example.myapplication.R
 import com.example.myapplication.game.core.Tablero
 
 class GameActivity : AppCompatActivity() {
-
-  /*private val config.filas = 8
-  private val config.columnas = 8
-  private val NUM_MINES = 10*/
   private var gameConfig: ConfiguracionTablero? = null
   private val CELL_SIZE_DP = 40 // Tamaño de cada celda en DP
 

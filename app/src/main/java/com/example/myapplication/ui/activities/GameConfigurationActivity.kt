@@ -1,6 +1,5 @@
 package com.example.myapplication.ui.activities
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -10,13 +9,11 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.Group
 import com.example.myapplication.R
-import com.example.myapplication.Server
-import com.example.myapplication.network.sockets.Cliente
 import java.io.Serializable
 
 data class ConfiguracionTablero(val filas: Int, val columnas: Int, val minas: Int) : Serializable
 
-class GameConfigurationActivity: AppCompatActivity() {
+class GameConfigurationActivity : AppCompatActivity() {
 
   private lateinit var rgDifficulty: RadioGroup
   private lateinit var groupCustomConfig: Group
@@ -76,13 +73,8 @@ class GameConfigurationActivity: AppCompatActivity() {
               "Iniciando partida: ${config.filas}x${config.columnas}, ${config.minas} minas",
               Toast.LENGTH_LONG)
           .show()
-      println("Puede que aqui antes del cliente")
       cliente?.setContext(this)
-      Thread{ cliente?.enviarMensaje(mensaje) }.start()
-      println("O aqui despues del cliente")
-      //val intent = Intent(this, GameActivity::class.java)
-      //intent.putExtra("GAME_CONFIG", config)
-      //startActivity(intent)
+      Thread { cliente?.enviarMensaje(mensaje) }.start()
     } else if (selectedId == R.id.rbCustom) {
       Toast.makeText(
               this,
