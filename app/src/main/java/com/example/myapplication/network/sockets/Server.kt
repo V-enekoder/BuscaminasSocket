@@ -1,6 +1,5 @@
 package com.example.myapplication
 
-
 import com.example.myapplication.network.sockets.ClientHandler
 import java.net.ServerSocket
 import java.net.Socket
@@ -12,18 +11,17 @@ class Server(private val listener: ClientHandler.ClienteConectadoListener) : Run
 
   override fun run() {
     serverSocket = ServerSocket(port)
-    println("Esperando por clientes...")
     try {
       while (true) {
         val socket: Socket = serverSocket!!.accept()
-        println("Cliente conectado: ${socket.inetAddress.hostAddress}")
+        // println("Cliente conectado: ${socket.inetAddress.hostAddress}")
         val cliente = ClientHandler(socket)
         ClientHandler.clientes.add(cliente)
 
         listener.onClientCountChanged(ClientHandler.clientes.size)
 
         thread { cliente.run() }
-          println("Cantidad de clientes conectados: ${ClientHandler.clientes.size}")
+        // println("Cantidad de clientes conectados: ${ClientHandler.clientes.size}")
       }
     } catch (e: Exception) {
       e.printStackTrace()
@@ -38,13 +36,11 @@ class Server(private val listener: ClientHandler.ClienteConectadoListener) : Run
     }
   }
 
-  fun descifrarMensaje(msj: String){
+  fun descifrarMensaje(msj: String) {
     var type: String = msj.split(" ")[0]
 
-    when(type){
-      "GAME_START" -> {
-
-      }
+    when (type) {
+      "GAME_START" -> {}
     }
   }
 

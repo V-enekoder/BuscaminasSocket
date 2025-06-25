@@ -20,9 +20,9 @@ class ClientHandler(sock: Socket) : Runnable {
     dis = BufferedReader(InputStreamReader(socket!!.getInputStream()))
     dos = PrintWriter(socket!!.getOutputStream(), true)
 
-    //clientes.add(this)
+    // clientes.add(this)
 
-    while (socket!!.isConnected) {
+    while (socket.isConnected) {
       try {
         var mensaje: String = dis!!.readLine()
         enviarMensaje(mensaje)
@@ -33,7 +33,6 @@ class ClientHandler(sock: Socket) : Runnable {
   }
 
   fun enviarMensaje(msj: String) {
-    println("Desde el handler el mensaje es: $msj")
     for (cliente in clientes) {
       try {
         cliente.dos?.println(msj)

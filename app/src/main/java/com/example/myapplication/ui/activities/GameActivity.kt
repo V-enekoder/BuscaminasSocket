@@ -19,8 +19,9 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.gridlayout.widget.GridLayout
 import com.example.myapplication.R
 import com.example.myapplication.game.core.Tablero
+import com.example.myapplication.network.sockets.OnMoveReceivedListener
 
-class GameActivity : AppCompatActivity() {
+class GameActivity : AppCompatActivity(), OnMoveReceivedListener {
   private var gameConfig: ConfiguracionTablero? = null
   private val CELL_SIZE_DP = 40 // Tamaño de cada celda en DP
 
@@ -37,22 +38,20 @@ class GameActivity : AppCompatActivity() {
   private var juegoActivo = true // Para saber si el juego ha terminado
   private var toastActual: Toast? = null
 
+  private val cliente = MainActivity.Sockets.clienteU
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     enableEdgeToEdge() // Para el diseño Edge-to-Edge
     setContentView(R.layout.activity_game) // Carga el XML
 
     recuperarConfiguracion()
-
-    // --- PASO 2: VALIDAR QUE LA CONFIGURACIÓN SE RECIBIÓ CORRECTAMENTE ---
     if (gameConfig == null) {
-      // Si no hay configuración, no podemos iniciar el juego.
-      // Mostramos un error y cerramos la actividad.
       Toast.makeText(
               this, "Error: No se pudo cargar la configuración del juego.", Toast.LENGTH_LONG)
           .show()
-      finish() // Cierra GameActivity y vuelve a la pantalla anterior
-      return // Detiene la ejecución de onCreate para evitar crashes
+      finish()
+      return
     }
 
     val mainContainer = findViewById<View>(R.id.main_container)
@@ -61,7 +60,7 @@ class GameActivity : AppCompatActivity() {
       v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
       insets
     }
-
+    runOnUiThread { cliente?.setMoveListener(this) }
     inicializarVistas()
     iniciarNuevoJuego()
     setupSpinner()
@@ -147,16 +146,27 @@ class GameActivity : AppCompatActivity() {
         }
   }
 
-  private fun setupButtonListener() {
+  /*private fun setupButtonListener() {
     val config = gameConfig!!
+
     sendMoveButton.setOnClickListener {
       if (!juegoActivo) {
         Toast.makeText(this, "El juego ha terminado. Inicia uno nuevo.", Toast.LENGTH_SHORT).show()
         return@setOnClickListener
       }
 
+      /*val fila = rowEditText.text.toString()
+      val columna = columnEditText.text.toString()
+      val accion = actionSpinner.selectedItem.toString() // "REVELAR" o "MARCAR"
+
+      // Creamos el mensaje para el servidor
+      val mensajeMovimiento = "MOVE $accion ${fila}_${columna}"
+
+      // Usamos la instancia del cliente para enviar el mensaje en un hilo
+      Thread { cliente?.enviarMensaje(mensajeMovimiento) }.start()*/
       val row = rowEditText.text.toString().toIntOrNull()
       val col = columnEditText.text.toString().toIntOrNull()
+      val action = actionSpinner.selectedItemPosition.toString()
 
       if (row == null ||
           col == null ||
@@ -182,6 +192,61 @@ class GameActivity : AppCompatActivity() {
         revelarTableroCompleto()
       }
       // --- Comprueba el resultado del juego desde el MODELO ---
+      verificarEstadoDelJuego()
+    }
+  }*/
+
+  private fun setupButtonListener() {
+    sendMoveButton.setOnClickListener {
+      if (!juegoActivo) {
+        mostrarToast("El juego ha terminado.")
+        return@setOnClickListener
+      }
+
+      val rowStr = rowEditText.text.toString()
+      val colStr = columnEditText.text.toString()
+
+      if (rowStr.isEmpty() || colStr.isEmpty()) {
+        mostrarToast("Coordenadas inválidas.")
+        return@setOnClickListener
+      }
+
+      // 3. Construye el mensaje con la jugada
+      val action =
+          when (actionSpinner.selectedItemPosition) {
+            0 -> "REVEAL" // Usaremos strings para que sea más legible
+            1 -> "FLAG"
+            2 -> "UNFLAG"
+            else -> ""
+          }
+
+      val mensajeMovimiento = "MOVE $action ${rowStr}_${colStr}"
+
+      // 4. Envía la jugada al servidor (que la reenviará a todos)
+      Thread { cliente?.enviarMensaje(mensajeMovimiento) }.start()
+    }
+  }
+
+  // 5. ¡AQUÍ ESTÁ LA LÓGICA CLAVE!
+  // Este método es llamado por la clase Cliente cuando llega una jugada del servidor.
+  override fun onMoveReceived(action: String, row: Int, col: Int) {
+    // Ejecutamos la lógica del juego en el hilo de la UI para poder actualizar las vistas
+    runOnUiThread {
+      println("GameActivity: Jugada recibida - Acción: $action, Fila: $row, Col: $col")
+
+      if (!juegoActivo) return@runOnUiThread // No procesar si el juego ya terminó
+
+      // --- Le dice al MODELO LOCAL qué hacer ---
+      when (action) {
+        "REVEAL" -> tableroLogico.abrirCasilla(row, col)
+        "FLAG" -> tableroLogico.marcarCasilla(row, col)
+        "UNFLAG" -> tableroLogico.desmarcarCasilla(row, col)
+      }
+
+      // --- Pide a la VISTA que se actualice con los cambios del modelo local ---
+      actualizarVistaTablero()
+
+      // --- Comprueba el estado del juego después de la jugada ---
       verificarEstadoDelJuego()
     }
   }

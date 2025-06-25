@@ -1,7 +1,7 @@
 package com.example.myapplication.network.sockets
 
-import android.content.Intent
 import android.content.Context
+import android.content.Intent
 import com.example.myapplication.ui.activities.ConfiguracionTablero
 import com.example.myapplication.ui.activities.GameActivity
 import java.io.BufferedReader
@@ -15,10 +15,10 @@ class Cliente(dir: String) : Runnable {
   private var dis: BufferedReader? = null
   private var dos: PrintWriter? = null
   private var context: Context? = null
+  private var moveListener: OnMoveReceivedListener? = null
 
   override fun run() {
     try {
-      println("Comprobando que el cliente inicio...")
       socket = Socket(direccionIP, 5200)
       dis = BufferedReader(InputStreamReader(socket!!.getInputStream()))
       dos = PrintWriter(socket!!.getOutputStream(), true)
@@ -30,10 +30,10 @@ class Cliente(dir: String) : Runnable {
     }
   }
 
-  fun descifrarMensaje(msj: String){
+  /*  fun descifrarMensaje(msj: String) {
     var type: String = msj.split(" ")[0]
 
-    when(type){
+    when (type) {
       "GAME_CONFIG" -> {
         val config = interpretarConfiguracion(msj)
         if (config != null) {
@@ -45,6 +45,45 @@ class Cliente(dir: String) : Runnable {
         }
       }
     }
+  }*/
+
+  fun descifrarMensaje(msj: String) {
+    val partes = msj.split(" ")
+    val type = partes[0]
+
+    when (type) {
+      "GAME_CONFIG" -> {
+        val config = interpretarConfiguracion(msj)
+        if (config != null) {
+          // Lanzar GameActivity con esa config
+          val intent = Intent(context, GameActivity::class.java)
+          intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+          intent.putExtra("GAME_CONFIG", config)
+          context?.startActivity(intent)
+        }
+      }
+      "MOVE" -> {
+        try {
+          // Mensaje esperado: "MOVE ACCION FILA_COLUMNA"
+          // ej: "MOVE REVEAL 5_3"
+          val action = partes[1] // "REVEAL", "FLAG", etc.
+          val coords = partes[2].split("_")
+          val row = coords[0].toInt()
+          val col = coords[1].toInt()
+
+          // Notifica a la GameActivity para que ejecute la jugada
+          moveListener?.onMoveReceived(action, row, col)
+        } catch (e: Exception) {
+          println("Error al interpretar mensaje MOVE: $msj")
+          e.printStackTrace()
+        }
+      }
+    // ... otros posibles tipos de mensajes ...
+    }
+  }
+
+  fun setMoveListener(listener: OnMoveReceivedListener?) {
+    this.moveListener = listener
   }
 
   fun interpretarConfiguracion(msj: String): ConfiguracionTablero? {
@@ -61,7 +100,6 @@ class Cliente(dir: String) : Runnable {
 
   fun enviarMensaje(msj: String) {
     try {
-      println("El mensaje enviado es: $msj")
       dos?.println(msj)
     } catch (e: Exception) {
       e.printStackTrace()
@@ -73,7 +111,7 @@ class Cliente(dir: String) : Runnable {
       var mensajeRecibido: String
       while (socket?.isConnected == true) {
         mensajeRecibido = dis?.readLine().toString()
-        println("El mensaje recibido fue: $mensajeRecibido")
+        // println("El mensaje recibido fue: $mensajeRecibido")
         descifrarMensaje(mensajeRecibido)
       }
     } catch (e: Exception) {
@@ -81,7 +119,7 @@ class Cliente(dir: String) : Runnable {
     }
   }
 
-  fun setContext(contexto: Context){
+  fun setContext(contexto: Context) {
     context = contexto
   }
 }
