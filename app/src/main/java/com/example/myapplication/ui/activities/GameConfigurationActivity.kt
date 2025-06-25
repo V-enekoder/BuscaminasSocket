@@ -11,7 +11,12 @@ import androidx.constraintlayout.widget.Group
 import com.example.myapplication.R
 import java.io.Serializable
 
-data class ConfiguracionTablero(val filas: Int, val columnas: Int, val minas: Int) : Serializable
+data class ConfiguracionTablero(
+    val filas: Int,
+    val columnas: Int,
+    val minas: Int,
+    val posicionesMinas: List<Pair<Int, Int>>? = null
+) : Serializable
 
 class GameConfigurationActivity : AppCompatActivity() {
 
@@ -66,8 +71,9 @@ class GameConfigurationActivity : AppCompatActivity() {
         }
 
     if (config != null) {
-      val mensaje = config.toMessage()
-      // Configuración válida, podemos iniciar el juego
+      val posicionesMinas = generarPosicionesMinas(config.filas, config.columnas, config.minas)
+
+      val mensaje = config.toMessage(posicionesMinas)
       Toast.makeText(
               this,
               "Iniciando partida: ${config.filas}x${config.columnas}, ${config.minas} minas",
@@ -87,8 +93,31 @@ class GameConfigurationActivity : AppCompatActivity() {
     }
   }
 
-  fun ConfiguracionTablero.toMessage(): String {
-    return "GAME_CONFIG ${filas}_${columnas}_${minas}"
+  private fun generarPosicionesMinas(
+      filas: Int,
+      columnas: Int,
+      cantidadMinas: Int
+  ): List<Pair<Int, Int>> {
+    val posiciones = mutableSetOf<Pair<Int, Int>>()
+    val random = java.util.Random()
+
+    while (posiciones.size < cantidadMinas) {
+      val fila = random.nextInt(filas)
+      val columna = random.nextInt(columnas)
+      posiciones.add(Pair(fila, columna))
+    }
+    return posiciones.toList()
+  }
+
+  // ¡MODIFICADO! La función ahora acepta la lista de posiciones
+  fun ConfiguracionTablero.toMessage(posiciones: List<Pair<Int, Int>>): String {
+    // Convertimos la lista de pares (ej: [(0,1), (2,3)]) a un string
+    // Resultado: "0-1_2-3"
+    val posicionesStr = posiciones.joinToString("_") { "${it.first}-${it.second}" }
+
+    // El nuevo formato del mensaje es:
+    // GAME_CONFIG filas_columnas_minas POSICIONES
+    return "GAME_CONFIG ${filas}_${columnas}_${minas} $posicionesStr"
   }
 
   private fun getCustomConfiguration(): ConfiguracionTablero? {

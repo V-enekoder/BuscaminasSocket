@@ -68,7 +68,7 @@ class Cliente(dir: String, private val turno: Int) : Runnable {
     this.moveListener = listener
   }
 
-  fun interpretarConfiguracion(msj: String): ConfiguracionTablero? {
+  /*fun interpretarConfiguracion(msj: String): ConfiguracionTablero? {
     return try {
       val divide = msj.removePrefix("GAME_CONFIG ").split("_")
       val filas = divide[0].toInt()
@@ -76,6 +76,31 @@ class Cliente(dir: String, private val turno: Int) : Runnable {
       val minas = divide[2].toInt()
       ConfiguracionTablero(filas, columnas, minas)
     } catch (e: Exception) {
+      null
+    }
+  }*/
+
+  fun interpretarConfiguracion(msj: String): ConfiguracionTablero? {
+    return try {
+      // Mensaje esperado: "GAME_CONFIG F_C_M F1-C1_F2-C2_..."
+      val partes = msj.removePrefix("GAME_CONFIG ").split(" ")
+
+      val configBasica = partes[0].split("_")
+      val filas = configBasica[0].toInt()
+      val columnas = configBasica[1].toInt()
+      val minas = configBasica[2].toInt()
+
+      val posicionesStr = partes[1] // "0-1_2-3_..."
+      val listaPosiciones =
+          posicionesStr.split("_").map { pos ->
+            val coords = pos.split("-")
+            Pair(coords[0].toInt(), coords[1].toInt())
+          }
+
+      // Creamos el objeto de configuración con la lista de minas
+      ConfiguracionTablero(filas, columnas, minas, listaPosiciones)
+    } catch (e: Exception) {
+      e.printStackTrace()
       null
     }
   }

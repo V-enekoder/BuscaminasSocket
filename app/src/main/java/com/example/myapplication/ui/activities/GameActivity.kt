@@ -14,6 +14,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.graphics.toColorInt
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.gridlayout.widget.GridLayout
@@ -67,7 +68,6 @@ class GameActivity : AppCompatActivity(), OnMoveReceivedListener {
     // Obtenemos nuestro número de turno desde nuestra instancia de cliente
     miTurno = cliente?.getTurno() ?: -1
     if (miTurno == -1) {
-      // Error grave, no deberíamos poder jugar
       mostrarToast("Error: No se pudo identificar el turno del jugador.")
       finish()
       return
@@ -109,7 +109,7 @@ class GameActivity : AppCompatActivity(), OnMoveReceivedListener {
     val config = gameConfig!!
 
     // 1. Crear la instancia del MODELO
-    tableroLogico = Tablero(config.filas, config.columnas, config.minas, "Victor")
+    tableroLogico = Tablero(config.filas, config.columnas, config.posicionesMinas!!, "Victor")
     juegoActivo = true
 
     // 2. Crear la VISTA inicial
@@ -227,7 +227,7 @@ class GameActivity : AppCompatActivity(), OnMoveReceivedListener {
       sendMoveButton.isEnabled = true
       sendMoveButton.text = "ENVIAR JUGADA" // Texto normal
       // Opcional: cambiar el color para que sea más obvio
-      sendMoveButton.setBackgroundColor(Color.parseColor("#FF6200EE")) // Color principal
+      sendMoveButton.setBackgroundColor("#FF6200EE".toColorInt()) // Color principal
     } else {
       // No es mi turno, tengo que esperar.
       sendMoveButton.isEnabled = false
