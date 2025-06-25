@@ -38,6 +38,9 @@ class GameActivity : AppCompatActivity(), OnMoveReceivedListener {
   private var juegoActivo = true // Para saber si el juego ha terminado
   private var toastActual: Toast? = null
 
+  private var turnoActual = 1 // El juego siempre empieza en el turno 1
+  private var miTurno = -1 // Aún no sabemos qué turno somos, lo asignará el cliente
+
   private val cliente = MainActivity.Sockets.clienteU
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,6 +63,16 @@ class GameActivity : AppCompatActivity(), OnMoveReceivedListener {
       v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
       insets
     }
+
+    // Obtenemos nuestro número de turno desde nuestra instancia de cliente
+    miTurno = cliente?.getTurno() ?: -1
+    if (miTurno == -1) {
+      // Error grave, no deberíamos poder jugar
+      mostrarToast("Error: No se pudo identificar el turno del jugador.")
+      finish()
+      return
+    }
+
     runOnUiThread { cliente?.setMoveListener(this) }
     inicializarVistas()
     iniciarNuevoJuego()
@@ -146,56 +159,6 @@ class GameActivity : AppCompatActivity(), OnMoveReceivedListener {
         }
   }
 
-  /*private fun setupButtonListener() {
-    val config = gameConfig!!
-
-    sendMoveButton.setOnClickListener {
-      if (!juegoActivo) {
-        Toast.makeText(this, "El juego ha terminado. Inicia uno nuevo.", Toast.LENGTH_SHORT).show()
-        return@setOnClickListener
-      }
-
-      /*val fila = rowEditText.text.toString()
-      val columna = columnEditText.text.toString()
-      val accion = actionSpinner.selectedItem.toString() // "REVELAR" o "MARCAR"
-
-      // Creamos el mensaje para el servidor
-      val mensajeMovimiento = "MOVE $accion ${fila}_${columna}"
-
-      // Usamos la instancia del cliente para enviar el mensaje en un hilo
-      Thread { cliente?.enviarMensaje(mensajeMovimiento) }.start()*/
-      val row = rowEditText.text.toString().toIntOrNull()
-      val col = columnEditText.text.toString().toIntOrNull()
-      val action = actionSpinner.selectedItemPosition.toString()
-
-      if (row == null ||
-          col == null ||
-          row !in 0 until config.filas ||
-          col !in 0 until config.columnas) {
-        Toast.makeText(this, "Coordenadas inválidas.", Toast.LENGTH_SHORT).show()
-        return@setOnClickListener
-      }
-
-      // --- Le dice al MODELO qué hacer ---
-      val resultadoJugada: Int =
-          when (actionSpinner.selectedItemPosition) {
-            0 -> tableroLogico.abrirCasilla(row, col)
-            1 -> tableroLogico.marcarCasilla(row, col)
-            2 -> tableroLogico.desmarcarCasilla(row, col)
-            else -> 0
-          }
-      // --- Pide a la VISTA que se actualice ---
-
-      actualizarVistaTablero()
-      if (resultadoJugada == -1) {
-        juegoActivo = false
-        revelarTableroCompleto()
-      }
-      // --- Comprueba el resultado del juego desde el MODELO ---
-      verificarEstadoDelJuego()
-    }
-  }*/
-
   private fun setupButtonListener() {
     sendMoveButton.setOnClickListener {
       if (!juegoActivo) {
@@ -219,8 +182,9 @@ class GameActivity : AppCompatActivity(), OnMoveReceivedListener {
             2 -> "UNFLAG"
             else -> ""
           }
+      val miTurno = cliente?.getTurno() ?: -1 // Obtenemos el turno del cliente
 
-      val mensajeMovimiento = "MOVE $action ${rowStr}_${colStr}"
+      val mensajeMovimiento = "MOVE $miTurno $action ${rowStr}_${colStr}"
 
       // 4. Envía la jugada al servidor (que la reenviará a todos)
       Thread { cliente?.enviarMensaje(mensajeMovimiento) }.start()
@@ -229,7 +193,7 @@ class GameActivity : AppCompatActivity(), OnMoveReceivedListener {
 
   // 5. ¡AQUÍ ESTÁ LA LÓGICA CLAVE!
   // Este método es llamado por la clase Cliente cuando llega una jugada del servidor.
-  override fun onMoveReceived(action: String, row: Int, col: Int) {
+  override fun onMoveReceived(turnoJugador: Int, action: String, row: Int, col: Int) {
     // Ejecutamos la lógica del juego en el hilo de la UI para poder actualizar las vistas
     runOnUiThread {
       println("GameActivity: Jugada recibida - Acción: $action, Fila: $row, Col: $col")
@@ -246,8 +210,30 @@ class GameActivity : AppCompatActivity(), OnMoveReceivedListener {
       // --- Pide a la VISTA que se actualice con los cambios del modelo local ---
       actualizarVistaTablero()
 
+      turnoActual = if (turnoJugador == 1) 2 else 1
+
+      // 2. Actualizamos el estado del botón basándonos en el nuevo turno.
+      actualizarEstadoBoton()
+
       // --- Comprueba el estado del juego después de la jugada ---
       verificarEstadoDelJuego()
+    }
+  }
+
+  private fun actualizarEstadoBoton() {
+    // La condición es simple: ¿El turno actual es mi turno?
+    if (turnoActual == miTurno) {
+      // ¡Es mi turno!
+      sendMoveButton.isEnabled = true
+      sendMoveButton.text = "ENVIAR JUGADA" // Texto normal
+      // Opcional: cambiar el color para que sea más obvio
+      sendMoveButton.setBackgroundColor(Color.parseColor("#FF6200EE")) // Color principal
+    } else {
+      // No es mi turno, tengo que esperar.
+      sendMoveButton.isEnabled = false
+      sendMoveButton.text = "ESPERANDO AL OPONENTE..." // Informar al usuario
+      // Opcional: cambiar el color a un gris
+      sendMoveButton.setBackgroundColor(Color.GRAY)
     }
   }
 

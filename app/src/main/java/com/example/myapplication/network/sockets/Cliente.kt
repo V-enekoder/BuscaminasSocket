@@ -9,7 +9,7 @@ import java.io.InputStreamReader
 import java.io.PrintWriter
 import java.net.Socket
 
-class Cliente(dir: String) : Runnable {
+class Cliente(dir: String, private val turno: Int) : Runnable {
   private var direccionIP = dir
   private var socket: Socket? = null
   private var dis: BufferedReader? = null
@@ -30,23 +30,6 @@ class Cliente(dir: String) : Runnable {
     }
   }
 
-  /*  fun descifrarMensaje(msj: String) {
-    var type: String = msj.split(" ")[0]
-
-    when (type) {
-      "GAME_CONFIG" -> {
-        val config = interpretarConfiguracion(msj)
-        if (config != null) {
-          // Lanzar GameActivity con esa config
-          val intent = Intent(context, GameActivity::class.java)
-          intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-          intent.putExtra("GAME_CONFIG", config)
-          context?.startActivity(intent)
-        }
-      }
-    }
-  }*/
-
   fun descifrarMensaje(msj: String) {
     val partes = msj.split(" ")
     val type = partes[0]
@@ -64,15 +47,14 @@ class Cliente(dir: String) : Runnable {
       }
       "MOVE" -> {
         try {
-          // Mensaje esperado: "MOVE ACCION FILA_COLUMNA"
-          // ej: "MOVE REVEAL 5_3"
-          val action = partes[1] // "REVEAL", "FLAG", etc.
-          val coords = partes[2].split("_")
+          val turnoJugador = partes[1].toInt() // Turno del que jugó
+          val action = partes[2] // "REVEAL", "FLAG", etc.
+          val coords = partes[3].split("_")
           val row = coords[0].toInt()
           val col = coords[1].toInt()
 
-          // Notifica a la GameActivity para que ejecute la jugada
-          moveListener?.onMoveReceived(action, row, col)
+          // Notifica a GameActivity, ¡ahora con el turno!
+          moveListener?.onMoveReceived(turnoJugador, action, row, col)
         } catch (e: Exception) {
           println("Error al interpretar mensaje MOVE: $msj")
           e.printStackTrace()
@@ -121,5 +103,9 @@ class Cliente(dir: String) : Runnable {
 
   fun setContext(contexto: Context) {
     context = contexto
+  }
+
+  fun getTurno(): Int {
+    return turno
   }
 }

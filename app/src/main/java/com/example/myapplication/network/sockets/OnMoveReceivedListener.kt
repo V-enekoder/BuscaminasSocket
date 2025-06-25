@@ -1,5 +1,5 @@
 package com.example.myapplication.network.sockets
 
 interface OnMoveReceivedListener {
-  fun onMoveReceived(action: String, row: Int, col: Int)
+  fun onMoveReceived(turno: Int, action: String, row: Int, col: Int)
 }

@@ -39,7 +39,7 @@ class ClientActivity : AppCompatActivity() {
 
     val message = "Intentando conectar a IP: $direccionIP"
     Toast.makeText(this, message, Toast.LENGTH_LONG).show()
-    client = Cliente(direccionIP)
+    client = Cliente(direccionIP, 2)
     MainActivity.Sockets.clienteU = client
     client.setContext(this)
     thread { client.run() }

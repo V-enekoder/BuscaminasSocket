@@ -31,7 +31,7 @@ class ServerActivity : AppCompatActivity(), ClientHandler.ClienteConectadoListen
     } else {
       tvIpAddress.text = "No se pudo obtener la IP. ¿Estás conectado a una red WiFi?"
     }
-    client = Cliente(ipAddress)
+    client = Cliente(ipAddress, 1)
     MainActivity.Sockets.serverU = server
     MainActivity.Sockets.clienteU = client
     thread { server.run() }
